@@ -2,317 +2,766 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Mirror</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mohalla Chanda — Community Collection</title>
+
+  <!-- Google Fonts: Playfair Display (display) + DM Sans (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    /* ─────────────────────────────────────────────
+       CSS VARIABLES & RESET
+    ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --size: min(78vw, 78vh);
-      --ring-color: #c9a96e;
-      --bg: #0d0d0d;
-      --text: #e8dcc8;
+      --white:       #ffffff;
+      --off-white:   #f8f9fa;
+      --border:      #e8eaed;
+      --text-primary:   #202124;
+      --text-secondary: #5f6368;
+      --text-light:     #9aa0a6;
+      --google-blue:    #1a73e8;
+      --google-blue-h:  #1558b0;
+      --google-red:     #ea4335;
+      --google-yellow:  #fbbc04;
+      --google-green:   #34a853;
+      --amber:          #f9ab00;
+      --amber-light:    #fef7e0;
+      --shadow-sm:  0 1px 3px rgba(60,64,67,.15), 0 1px 2px rgba(60,64,67,.1);
+      --shadow-md:  0 2px 8px rgba(60,64,67,.15), 0 1px 3px rgba(60,64,67,.1);
+      --shadow-lg:  0 4px 20px rgba(60,64,67,.12), 0 2px 6px rgba(60,64,67,.08);
+      --radius:     12px;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body:    'DM Sans', sans-serif;
     }
 
     html, body {
-      width: 100%;
       height: 100%;
-      overflow: hidden;
-      background: var(--bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Cormorant Garamond', Georgia, serif;
+      background: var(--white);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .scene {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .glow {
-      position: absolute;
-      width: calc(var(--size) * 1.3);
-      height: calc(var(--size) * 1.3);
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(201,169,110,0.18) 0%, transparent 70%);
-      animation: pulse 3s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.6; }
-      50%       { transform: scale(1.07); opacity: 1; }
-    }
-
-    .ring {
-      position: absolute;
-      width: calc(var(--size) + 18px);
-      height: calc(var(--size) + 18px);
-      border-radius: 50%;
-      background: conic-gradient(
-        from 0deg,
-        transparent 0deg,
-        var(--ring-color) 60deg,
-        #f0dfa8 90deg,
-        var(--ring-color) 120deg,
-        transparent 180deg,
-        var(--ring-color) 240deg,
-        #f0dfa8 270deg,
-        var(--ring-color) 300deg,
-        transparent 360deg
-      );
-      animation: spin 12s linear infinite;
-      pointer-events: none;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .ring::after {
-      content: '';
-      position: absolute;
-      inset: 3px;
-      border-radius: 50%;
-      background: var(--bg);
-    }
-
-    .mirror-btn {
-      position: relative;
-      z-index: 2;
-      width: var(--size);
-      height: var(--size);
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      background: radial-gradient(circle at 35% 35%, #2a2520, #0d0d0d);
-      overflow: hidden;
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
-      box-shadow:
-        inset 0 2px 8px rgba(255,255,255,0.05),
-        inset 0 -4px 12px rgba(0,0,0,0.6),
-        0 8px 40px rgba(0,0,0,0.7);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .mirror-btn:active {
-      transform: scale(0.97);
-    }
-
-    .label-wrap {
-      position: absolute;
-      inset: 0;
+    /* ─────────────────────────────────────────────
+       PAGE LAYOUT
+    ───────────────────────────────────────────── */
+    .page-wrapper {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      transition: opacity 0.6s ease;
-      pointer-events: none;
-      user-select: none;
+      padding: 24px 16px 80px;  /* bottom padding for footer */
+      background: var(--white);
     }
 
-    .label-wrap.hidden {
-      opacity: 0;
-    }
-
-    .label-icon {
-      width: 44px;
-      height: 44px;
-      opacity: 0.75;
-    }
-
-    .label-text {
-      font-size: clamp(18px, 4.5vw, 26px);
-      font-weight: 300;
-      font-style: italic;
-      letter-spacing: 0.18em;
-      color: var(--text);
-      text-transform: uppercase;
-    }
-
-    .label-sub {
-      font-size: clamp(10px, 2.5vw, 13px);
-      font-weight: 300;
-      letter-spacing: 0.25em;
-      color: rgba(232,220,200,0.45);
-      text-transform: uppercase;
-    }
-
-    #video {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-      transform: scaleX(-1);
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
-
-    #video.active {
-      opacity: 1;
-    }
-
-    .vignette {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: radial-gradient(circle, transparent 55%, rgba(0,0,0,0.55) 100%);
-      pointer-events: none;
-      z-index: 3;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
-
-    .vignette.active {
-      opacity: 1;
-    }
-
-    .mirror-btn::before {
-      content: '';
-      position: absolute;
-      top: 6%;
-      left: 12%;
-      width: 40%;
-      height: 28%;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent 70%);
-      pointer-events: none;
-      z-index: 10;
-      transform: rotate(-15deg);
-    }
-
-    .tagline {
+    /* ─────────────────────────────────────────────
+       HEADER WORDMARK (top-left on desktop)
+    ───────────────────────────────────────────── */
+    .wordmark {
       position: fixed;
-      bottom: max(28px, env(safe-area-inset-bottom, 20px));
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-size: clamp(9px, 2.2vw, 11px);
-      letter-spacing: 0.35em;
-      color: rgba(232,220,200,0.2);
-      text-transform: uppercase;
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      pointer-events: none;
+      top: 0; left: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 24px;
+      z-index: 100;
+    }
+    .wordmark-icon {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      background: var(--google-blue);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .wordmark-icon svg { color: #fff; }
+    .wordmark-name {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -.2px;
     }
 
-    .error-msg {
-      position: absolute;
-      inset: 0;
+    /* ─────────────────────────────────────────────
+       CARD CONTAINER
+    ───────────────────────────────────────────── */
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      padding: 48px 40px 40px;
+      display: none;          /* hidden by default; JS shows correct one */
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      animation: fadeUp .35s ease both;
+    }
+    .card.active { display: flex; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─────────────────────────────────────────────
+       LOGO MARK (inside card)
+    ───────────────────────────────────────────── */
+    .logo-mark {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: var(--google-blue);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(26,115,232,.35);
+    }
+    .logo-mark svg { width: 28px; height: 28px; color: #fff; }
+
+    /* ─────────────────────────────────────────────
+       TYPOGRAPHY IN CARD
+    ───────────────────────────────────────────── */
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-align: center;
+      letter-spacing: -.3px;
+      margin-bottom: 8px;
+    }
+    .card-subtitle {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      text-align: center;
+      max-width: 280px;
+      line-height: 1.55;
+      margin-bottom: 32px;
+    }
+
+    /* ─────────────────────────────────────────────
+       DIVIDER
+    ───────────────────────────────────────────── */
+    .divider {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider-text {
+      font-size: 12px;
+      color: var(--text-light);
+      white-space: nowrap;
+      font-weight: 500;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+
+    /* ─────────────────────────────────────────────
+       GOOGLE SIGN-IN BUTTON
+    ───────────────────────────────────────────── */
+    .btn-google {
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      padding: 20%;
-      font-size: clamp(11px, 3vw, 14px);
-      color: rgba(232,220,200,0.6);
-      font-style: italic;
-      letter-spacing: 0.05em;
-      line-height: 1.6;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      pointer-events: none;
+      gap: 12px;
+      padding: 12px 24px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, box-shadow .15s, border-color .15s;
+      box-shadow: var(--shadow-sm);
+      outline: none;
+      user-select: none;
+    }
+    .btn-google:hover {
+      background: var(--off-white);
+      box-shadow: var(--shadow-md);
+      border-color: #c6c9ce;
+    }
+    .btn-google:active {
+      background: #f1f3f4;
+      box-shadow: none;
+    }
+    .btn-google:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+    .btn-google-icon {
+      width: 20px; height: 20px;
+      flex-shrink: 0;
     }
 
-    .error-msg.visible {
+    /* ─────────────────────────────────────────────
+       PRIVACY NOTE
+    ───────────────────────────────────────────── */
+    .privacy-note {
+      margin-top: 20px;
+      font-size: 12px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .privacy-note a {
+      color: var(--google-blue);
+      text-decoration: none;
+    }
+    .privacy-note a:hover { text-decoration: underline; }
+
+    /* ─────────────────────────────────────────────
+       LOADING SPINNER SCREEN
+    ───────────────────────────────────────────── */
+    #loading-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--google-blue);
+      border-radius: 50%;
+      animation: spin .75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    /* ─────────────────────────────────────────────
+       WAITING ROOM CARD
+    ───────────────────────────────────────────── */
+    .waiting-avatar {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      object-fit: cover;
+      margin-bottom: 18px;
+    }
+    .waiting-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: var(--amber-light);
+      border: 1px solid #fce8a0;
+      margin-bottom: 20px;
+    }
+    .waiting-badge-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--amber);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .5; transform: scale(.7); }
+    }
+    .waiting-badge-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: #9a6f00;
+      letter-spacing: .2px;
+    }
+
+    .waiting-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .waiting-message {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-align: center;
+      max-width: 300px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .info-row {
+      width: 100%;
+      background: var(--off-white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .info-row-icon { color: var(--text-light); flex-shrink: 0; }
+    .info-row-content { flex: 1; min-width: 0; }
+    .info-row-label { font-size: 11px; color: var(--text-light); font-weight: 500; text-transform: uppercase; letter-spacing: .4px; }
+    .info-row-value { font-size: 14px; color: var(--text-primary); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .btn-signout {
+      margin-top: 22px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: background .15s, color .15s;
+    }
+    .btn-signout:hover { background: var(--off-white); color: var(--text-primary); }
+
+    /* ─────────────────────────────────────────────
+       TOAST / ERROR MESSAGE
+    ───────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 72px; left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: #323232;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 400;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s, transform .25s;
+      white-space: nowrap;
+      z-index: 999;
+    }
+    .toast.show {
       opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ─────────────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────────────── */
+    footer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 52px;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      z-index: 50;
+    }
+    footer a {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 400;
+      transition: color .15s;
+    }
+    footer a:hover { color: var(--google-blue); }
+    .footer-dot {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    /* ─────────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .card { padding: 36px 24px 32px; }
+      .card-title { font-size: 22px; }
+      .wordmark { padding: 14px 16px; }
+      .wordmark-name { font-size: 15px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="scene">
-    <div class="glow"></div>
-    <div class="ring"></div>
-
-    <button class="mirror-btn" id="btn" aria-label="Activate mirror camera">
-
-      <video id="video" autoplay playsinline muted></video>
-
-      <div class="vignette" id="vignette"></div>
-
-      <div class="label-wrap" id="label">
-        <svg class="label-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="22" cy="22" r="10" stroke="#c9a96e" stroke-width="1.2"/>
-          <circle cx="22" cy="22" r="16" stroke="rgba(201,169,110,0.4)" stroke-width="0.8" stroke-dasharray="3 4"/>
-          <circle cx="22" cy="22" r="3" fill="#c9a96e" opacity="0.8"/>
-          <line x1="22" y1="4"  x2="22" y2="8"  stroke="#c9a96e" stroke-width="1.2" stroke-linecap="round"/>
-          <line x1="22" y1="36" x2="22" y2="40" stroke="#c9a96e" stroke-width="1.2" stroke-linecap="round"/>
-          <line x1="4"  y1="22" x2="8"  y2="22" stroke="#c9a96e" stroke-width="1.2" stroke-linecap="round"/>
-          <line x1="36" y1="22" x2="40" y2="22" stroke="#c9a96e" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-        <span class="label-text">Mirror</span>
-        <span class="label-sub">tap to reflect</span>
-      </div>
-
-      <div class="error-msg" id="errorMsg"></div>
-
-    </button>
+  <!-- ─── WORDMARK (top-left) ─── -->
+  <div class="wordmark" aria-label="Mohalla Chanda">
+    <div class="wordmark-icon">
+      <!-- Rupee / community icon -->
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <span class="wordmark-name">Mohalla Chanda</span>
   </div>
 
-  <p class="tagline">hold still &nbsp;·&nbsp; breathe &nbsp;·&nbsp; observe</p>
+  <!-- ─── MAIN CONTENT ─── -->
+  <main class="page-wrapper" role="main">
 
-  <script>
-    const btn      = document.getElementById('btn');
-    const video    = document.getElementById('video');
-    const label    = document.getElementById('label');
-    const vignette = document.getElementById('vignette');
-    const errorMsg = document.getElementById('errorMsg');
+    <!-- 1. LOADING SCREEN -->
+    <div id="loading-screen" class="card active" aria-live="polite" aria-label="Loading">
+      <div class="spinner" role="status"></div>
+      <p class="loading-text">Checking your session…</p>
+    </div>
 
-    let stream = null;
-    let active = false;
+    <!-- 2. SIGN-IN CARD -->
+    <div id="signin-card" class="card" aria-label="Sign in">
+      <!-- Logo mark -->
+      <div class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
 
-    async function startMirror() {
-      if (active) return;
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 1280 } },
-          audio: false
+      <h1 class="card-title">Mohalla Chanda</h1>
+      <p class="card-subtitle">
+        Simplify community collection&nbsp;— track chanda, manage members, and keep your mohalla organised.
+      </p>
+
+      <div class="divider"><span class="divider-text">Continue with</span></div>
+
+      <!-- Google Sign-In Button -->
+      <button class="btn-google" id="btn-google-signin" type="button" aria-label="Sign in with Google">
+        <!-- Google "G" logo (official colors) -->
+        <svg class="btn-google-icon" viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          <path fill="none" d="M0 0h48v48H0z"/>
+        </svg>
+        Sign in with Google
+      </button>
+
+      <p class="privacy-note">
+        By signing in you agree to our community terms.<br/>
+        Your data is stored securely with Google Firebase.
+      </p>
+    </div>
+
+    <!-- 3. WAITING ROOM CARD -->
+    <div id="waiting-card" class="card" aria-label="Waiting for approval" aria-live="polite">
+      <img id="waiting-avatar" class="waiting-avatar" src="" alt="Your profile picture" />
+
+      <div class="waiting-badge" role="status">
+        <div class="waiting-badge-dot"></div>
+        <span class="waiting-badge-text">Pending Approval</span>
+      </div>
+
+      <h2 class="waiting-title">Almost there!</h2>
+      <p class="waiting-message">
+        Your account is waiting for administrator approval. You'll be redirected automatically once approved.
+      </p>
+
+      <!-- User info rows -->
+      <div class="info-row" aria-label="Your name">
+        <span class="info-row-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </span>
+        <div class="info-row-content">
+          <div class="info-row-label">Name</div>
+          <div class="info-row-value" id="waiting-name">—</div>
+        </div>
+      </div>
+
+      <div class="info-row" aria-label="Your email">
+        <span class="info-row-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </span>
+        <div class="info-row-content">
+          <div class="info-row-label">Email</div>
+          <div class="info-row-value" id="waiting-email">—</div>
+        </div>
+      </div>
+
+      <button class="btn-signout" id="btn-signout" type="button">Sign out</button>
+    </div>
+
+  </main>
+
+  <!-- ─── TOAST NOTIFICATION ─── -->
+  <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <a href="https://github.com/mathurnandi08-cmd/Techy.akash_0" target="_blank" rel="noopener noreferrer">
+      About this website
+    </a>
+    <div class="footer-dot"></div>
+    <a href="https://github.com/mathurnandi08-cmd/Techy.akash_0" target="_blank" rel="noopener noreferrer">
+      Mohalla Chanda
+    </a>
+  </footer>
+
+  <!-- ─────────────────────────────────────────────
+       FIREBASE: load config.js first, then SDK
+  ───────────────────────────────────────────── -->
+
+  <!-- config.js must expose: window.firebaseConfig = { apiKey, authDomain, … } -->
+  <script src="config.js"></script>
+
+  <!-- Firebase v10+ Modular SDK via CDN (compat layer used for simplicity) -->
+  <script type="module">
+    /* ══════════════════════════════════════════════════════════════
+       IMPORTS  — Firebase v10+ modular SDK
+    ══════════════════════════════════════════════════════════════ */
+    import { initializeApp }                    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, GoogleAuthProvider,
+             signInWithPopup, signOut,
+             onAuthStateChanged,
+             browserLocalPersistence,
+             setPersistence }                   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc,
+             getDoc, setDoc, onSnapshot,
+             serverTimestamp }                  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    /* ══════════════════════════════════════════════════════════════
+       CONSTANTS
+    ══════════════════════════════════════════════════════════════ */
+    const SUPER_ADMIN_EMAIL = "Mathur.nandi08@gmail.com";
+    const HOME_PAGE         = "home.html";
+
+    /* ══════════════════════════════════════════════════════════════
+       INITIALIZE FIREBASE from config.js (window.firebaseConfig)
+    ══════════════════════════════════════════════════════════════ */
+    if (!window.firebaseConfig) {
+      showToast("Firebase config not found. Ensure config.js is loaded.");
+      throw new Error("window.firebaseConfig is undefined. Load config.js before this script.");
+    }
+
+    const app  = initializeApp(window.firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    /* ══════════════════════════════════════════════════════════════
+       DOM REFERENCES
+    ══════════════════════════════════════════════════════════════ */
+    const loadingScreen  = document.getElementById("loading-screen");
+    const signinCard     = document.getElementById("signin-card");
+    const waitingCard    = document.getElementById("waiting-card");
+    const btnGoogleSignin = document.getElementById("btn-google-signin");
+    const btnSignout     = document.getElementById("btn-signout");
+    const waitingAvatar  = document.getElementById("waiting-avatar");
+    const waitingName    = document.getElementById("waiting-name");
+    const waitingEmail   = document.getElementById("waiting-email");
+    const toast          = document.getElementById("toast");
+
+    /* ══════════════════════════════════════════════════════════════
+       UTILITY — show / hide cards
+    ══════════════════════════════════════════════════════════════ */
+    function showCard(cardEl) {
+      [loadingScreen, signinCard, waitingCard].forEach(c => c.classList.remove("active"));
+      cardEl.classList.add("active");
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       UTILITY — toast notifications
+    ══════════════════════════════════════════════════════════════ */
+    let toastTimer;
+    function showToast(message, duration = 4000) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), duration);
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       UTILITY — redirect helper
+    ══════════════════════════════════════════════════════════════ */
+    function redirectToHome() {
+      window.location.href = HOME_PAGE;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       FIRESTORE — ensure user document exists; create if first login
+    ══════════════════════════════════════════════════════════════ */
+    async function ensureUserDocument(user) {
+      const userRef = doc(db, "Users", user.uid);
+      const snap    = await getDoc(userRef);
+
+      if (!snap.exists()) {
+        // First login — create document with role=member, status=pending
+        await setDoc(userRef, {
+          name:       user.displayName || "",
+          email:      user.email       || "",
+          photoURL:   user.photoURL    || "",
+          role:       "member",
+          status:     "pending",
+          createdAt:  serverTimestamp(),
         });
-        video.srcObject = stream;
-        await video.play();
-        active = true;
-        label.classList.add('hidden');
-        video.classList.add('active');
-        vignette.classList.add('active');
+      }
+
+      return userRef;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       REAL-TIME LISTENER — watch user's status field
+       Automatically redirects when status changes to "approved"
+    ══════════════════════════════════════════════════════════════ */
+    let unsubscribeSnapshot = null;   // keep reference to detach later
+
+    function watchUserStatus(userRef) {
+      // Detach any previous listener first
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+
+      unsubscribeSnapshot = onSnapshot(userRef, (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+
+        if (data.status === "approved") {
+          // ✅ Approved — redirect immediately
+          redirectToHome();
+        }
+        // If still pending the waiting card is already visible; nothing to do
+      }, (error) => {
+        console.error("Snapshot listener error:", error);
+        showToast("Connection issue. Please refresh the page.");
+      });
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       POPULATE WAITING ROOM with user details
+    ══════════════════════════════════════════════════════════════ */
+    function populateWaitingRoom(user) {
+      waitingAvatar.src = user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "U") + "&background=1a73e8&color=fff";
+      waitingName.textContent  = user.displayName || "—";
+      waitingEmail.textContent = user.email        || "—";
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       HANDLE AUTHENTICATED USER
+       Called both on initial load (onAuthStateChanged) and after
+       a fresh Google sign-in.
+    ══════════════════════════════════════════════════════════════ */
+    async function handleAuthenticatedUser(user) {
+      // Super admin bypass — redirect immediately
+      if (user.email === SUPER_ADMIN_EMAIL) {
+        redirectToHome();
+        return;
+      }
+
+      try {
+        // Ensure Firestore document exists (creates on first login)
+        const userRef = await ensureUserDocument(user);
+
+        // Read current status
+        const snap = await getDoc(userRef);
+        const data = snap.exists() ? snap.data() : {};
+
+        if (data.status === "approved") {
+          // Already approved — go straight to home
+          redirectToHome();
+        } else {
+          // Pending — show waiting room and start real-time listener
+          populateWaitingRoom(user);
+          showCard(waitingCard);
+          watchUserStatus(userRef);
+        }
       } catch (err) {
-        let msg = 'Camera access was denied. Please allow permissions and try again.';
-        if (err.name === 'NotFoundError')    msg = 'No camera found on this device.';
-        if (err.name === 'NotSupportedError' || err.name === 'SecurityError')
-          msg = 'Camera requires a secure (HTTPS) connection.';
-        errorMsg.textContent = msg;
-        errorMsg.classList.add('visible');
-        label.classList.add('hidden');
-        setTimeout(() => {
-          errorMsg.classList.remove('visible');
-          label.classList.remove('hidden');
-        }, 3200);
+        console.error("Error handling authenticated user:", err);
+        showToast("Something went wrong. Please try again.");
+        showCard(signinCard);
       }
     }
 
-    function stopMirror() {
-      if (!active) return;
-      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-      video.srcObject = null;
-      video.classList.remove('active');
-      vignette.classList.remove('active');
-      label.classList.remove('hidden');
-      active = false;
-    }
+    /* ══════════════════════════════════════════════════════════════
+       AUTH STATE LISTENER — runs on page load
+    ══════════════════════════════════════════════════════════════ */
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // User is already logged in
+        await handleAuthenticatedUser(user);
+      } else {
+        // No session — show sign-in
+        showCard(signinCard);
+      }
+    });
 
-    btn.addEventListener('click', () => active ? stopMirror() : startMirror());
+    /* ══════════════════════════════════════════════════════════════
+       GOOGLE SIGN-IN BUTTON HANDLER
+    ══════════════════════════════════════════════════════════════ */
+    btnGoogleSignin.addEventListener("click", async () => {
+      btnGoogleSignin.disabled = true;
+      btnGoogleSignin.textContent = "Signing in…";
+
+      try {
+        // Set persistence to LOCAL — user stays logged in after browser restart
+        await setPersistence(auth, browserLocalPersistence);
+
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: "select_account" });
+
+        const result = await signInWithPopup(auth, provider);
+        await handleAuthenticatedUser(result.user);
+
+      } catch (err) {
+        console.error("Google sign-in error:", err);
+
+        // Map Firebase error codes to friendly messages
+        const messages = {
+          "auth/popup-closed-by-user":    "Sign-in cancelled. Please try again.",
+          "auth/popup-blocked":           "Popup was blocked. Please allow popups for this site.",
+          "auth/network-request-failed":  "Network error. Check your connection and retry.",
+          "auth/cancelled-popup-request": "Another sign-in is in progress.",
+        };
+        showToast(messages[err.code] || "Sign-in failed. Please try again.");
+
+        // Restore button
+        btnGoogleSignin.disabled = false;
+        btnGoogleSignin.innerHTML = `
+          <svg class="btn-google-icon" viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            <path fill="none" d="M0 0h48v48H0z"/>
+          </svg>
+          Sign in with Google`;
+      }
+    });
+
+    /* ══════════════════════════════════════════════════════════════
+       SIGN-OUT BUTTON HANDLER
+    ══════════════════════════════════════════════════════════════ */
+    btnSignout.addEventListener("click", async () => {
+      try {
+        // Detach Firestore listener before signing out
+        if (unsubscribeSnapshot) {
+          unsubscribeSnapshot();
+          unsubscribeSnapshot = null;
+        }
+        await signOut(auth);
+        showCard(signinCard);
+      } catch (err) {
+        console.error("Sign-out error:", err);
+        showToast("Could not sign out. Please try again.");
+      }
+    });
+
   </script>
 
 </body>
